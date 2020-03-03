@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strings"
-
+    "github.com/iancoleman/orderedmap"
 	"github.com/alecthomas/jsonschema"
 	"github.com/golang/protobuf/proto"
 	"github.com/golang/protobuf/protoc-gen-go/descriptor"
@@ -15,8 +15,8 @@ var (
 	globalPkg = &ProtoPackage{
 		name:     "",
 		parent:   nil,
-		children: make(map[string]*ProtoPackage),
-		types:    make(map[string]*descriptor.DescriptorProto),
+		children: orderedmap.New(),
+		types:    orderedmap.New()
 	}
 )
 
@@ -33,8 +33,8 @@ func (c *Converter) registerType(pkgName *string, msg *descriptor.DescriptorProt
 				child = &ProtoPackage{
 					name:     pkg.name + "." + node,
 					parent:   pkg,
-					children: make(map[string]*ProtoPackage),
-					types:    make(map[string]*descriptor.DescriptorProto),
+					children: orderedmap.New(),
+					types:    orderedmap.New(),
 				}
 				pkg.children[node] = child
 			}
@@ -65,7 +65,7 @@ func (c *Converter) convertField(curPkg *ProtoPackage, desc *descriptor.FieldDes
 
 	// Prepare a new jsonschema.Type for our eventual return value:
 	jsonSchemaType := &jsonschema.Type{
-		Properties: make(map[string]*jsonschema.Type),
+		Properties: orderedmap.New(),
 	}
 
 	// Generate a description from src comments (if available)
@@ -262,7 +262,7 @@ func (c *Converter) convertMessageType(curPkg *ProtoPackage, msg *descriptor.Des
 
 	// Prepare a new jsonschema:
 	jsonSchemaType := jsonschema.Type{
-		Properties: make(map[string]*jsonschema.Type),
+		Properties: orderedmap.New(),
 		Version:    jsonschema.Version,
 	}
 	// Generate a description from src comments (if available)
