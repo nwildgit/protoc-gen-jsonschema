@@ -28,7 +28,7 @@ func (c *Converter) registerType(pkgName *string, msg *descriptor.DescriptorProt
 				// Skips leading "."
 				continue
 			}
-			child, ok := pkg.children[node]
+			child, ok := pkg.children.Get(node)
 			if !ok {
 				child = &ProtoPackage{
 					name:     pkg.name + "." + node,
@@ -36,12 +36,12 @@ func (c *Converter) registerType(pkgName *string, msg *descriptor.DescriptorProt
 					children: orderedmap.New(),
 					types:    orderedmap.New(),
 				}
-				pkg.children[node] = child
+				pkg.children.Set(node,child)
 			}
 			pkg = child
 		}
 	}
-	pkg.types[msg.GetName()] = msg
+	pkg.types.Set(msg.GetName(),msg)
 }
 
 func (c *Converter) relativelyLookupNestedType(desc *descriptor.DescriptorProto, name string) (*descriptor.DescriptorProto, bool) {
@@ -228,7 +228,8 @@ func (c *Converter) convertField(curPkg *ProtoPackage, desc *descriptor.FieldDes
 			}
 
 			// Marshal the "value" properties to JSON (because that's how we can pass on AdditionalProperties):
-			additionalPropertiesJSON, err := json.Marshal(recursedJSONSchemaType.Properties.Get("value"))
+			val, ok = recursedJSONSchemaType.Properties.Get("value");
+			additionalPropertiesJSON, err := json.Marshal(val)
 			if err != nil {
 				return nil, err
 			}
@@ -295,9 +296,9 @@ func (c *Converter) convertMessageType(curPkg *ProtoPackage, msg *descriptor.Des
 			c.logger.WithError(err).WithField("field_name", fieldDesc.GetName()).WithField("message_name", msg.GetName()).Error("Failed to convert field")
 			return jsonSchemaType, err
 		}
-		jsonSchemaType.Properties.Get(fieldDesc.GetName()) = recursedJSONSchemaType
+		jsonSchemaType.Properties.Set(fieldDesc.GetName(),recursedJSONSchemaType)
 		if c.UseProtoAndJSONFieldnames && fieldDesc.GetName() != fieldDesc.GetJsonName() {
-			jsonSchemaType.Properties.Get(fieldDesc.GetJsonName()) = recursedJSONSchemaType
+			jsonSchemaType.Properties.Set(fieldDesc.GetJsonName(),recursedJSONSchemaType)
 		}
 	}
 	return jsonSchemaType, nil
