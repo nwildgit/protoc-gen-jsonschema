@@ -29,6 +29,7 @@ func (c *Converter) registerType(pkgName *string, msg *descriptor.DescriptorProt
 				continue
 			}
 			child_tmp, ok := pkg.children.Get(node)
+			var child *ProtoPackage
 			if !ok {
 				child = &ProtoPackage{
 					name:     pkg.name + "." + node,
@@ -38,7 +39,7 @@ func (c *Converter) registerType(pkgName *string, msg *descriptor.DescriptorProt
 				}
 				pkg.children.Set(node,child)
 			} else {
-			    child := child_tmp.(*ProtoPackage)
+			    child = child_tmp.(*ProtoPackage)
 			}
 			pkg = child
 		}
