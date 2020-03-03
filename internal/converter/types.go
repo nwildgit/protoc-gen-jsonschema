@@ -229,7 +229,7 @@ func (c *Converter) convertField(curPkg *ProtoPackage, desc *descriptor.FieldDes
 			}
 
 			// Marshal the "value" properties to JSON (because that's how we can pass on AdditionalProperties):
-			val := recursedJSONSchemaType.Properties.Get("value");
+			val, _ := recursedJSONSchemaType.Properties.Get("value");
 			additionalPropertiesJSON, err := json.Marshal(val)
 			if err != nil {
 				return nil, err
