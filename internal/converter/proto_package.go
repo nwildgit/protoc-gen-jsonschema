@@ -34,7 +34,8 @@ func (c *Converter) relativelyLookupType(pkg *ProtoPackage, name string) (*descr
 		c.logger.Debug("empty message name")
 		return nil, false
 	case 1:
-		found, ok := pkg.types.Get(components[0]).(*descriptor.DescriptorProto)
+		found_tmp, ok := pkg.types.Get(components[0])
+		found := found_tmp.(*descriptor.DescriptorProto)
 		return found, ok
 	case 2:
 		c.logger.Tracef("Looking for %s in %s at %s (%v)", components[1], components[0], pkg.name, pkg)
@@ -57,8 +58,8 @@ func (c *Converter) relativelyLookupType(pkg *ProtoPackage, name string) (*descr
 func (c *Converter) relativelyLookupPackage(pkg *ProtoPackage, name string) (*ProtoPackage, bool) {
 	components := strings.Split(name, ".")
 	for _, c := range components {
-		var ok bool
-		pkg, ok = pkg.children.Get(c).(*ProtoPackage)
+		pkg_tmp, ok := pkg.children.Get(c)
+		pkg = pkg_tmp.(*ProtoPackage)
 		if !ok {
 			return nil, false
 		}
