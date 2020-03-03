@@ -11,7 +11,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/chrusty/protoc-gen-jsonschema/internal/converter"
+	"github.com/nwildgit/protoc-gen-jsonschema/internal/converter"
 	"github.com/golang/protobuf/proto"
 	plugin "github.com/golang/protobuf/protoc-gen-go/plugin"
 	"github.com/sirupsen/logrus"
