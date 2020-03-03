@@ -2,7 +2,7 @@ package converter
 
 import (
 	"strings"
-
+    "github.com/iancoleman/orderedmap"
 	"github.com/golang/protobuf/protoc-gen-go/descriptor"
 )
 
@@ -10,8 +10,8 @@ import (
 type ProtoPackage struct {
 	name     string
 	parent   *ProtoPackage
-	children map[string]*ProtoPackage
-	types    map[string]*descriptor.DescriptorProto
+	children orderedmap
+	types    orderedmap
 }
 
 func (c *Converter) lookupType(pkg *ProtoPackage, name string) (*descriptor.DescriptorProto, bool) {
