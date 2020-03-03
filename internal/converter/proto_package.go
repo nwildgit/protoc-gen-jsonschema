@@ -10,8 +10,8 @@ import (
 type ProtoPackage struct {
 	name     string
 	parent   *ProtoPackage
-	children orderedmap
-	types    orderedmap
+	children orderedmap.OrderedMap
+	types    orderedmap.OrderedMap
 }
 
 func (c *Converter) lookupType(pkg *ProtoPackage, name string) (*descriptor.DescriptorProto, bool) {
