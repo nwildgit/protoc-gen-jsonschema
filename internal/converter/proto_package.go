@@ -63,9 +63,10 @@ func (c *Converter) relativelyLookupPackage(pkg *ProtoPackage, name string) (*Pr
 	components := strings.Split(name, ".")
 	for _, c := range components {
 		pkg_tmp, ok := pkg.children.Get(c)
-		pkg = pkg_tmp.(*ProtoPackage)
 		if !ok {
 			return nil, false
+		} else {
+		    pkg = pkg_tmp.(*ProtoPackage)
 		}
 	}
 	return pkg, true
