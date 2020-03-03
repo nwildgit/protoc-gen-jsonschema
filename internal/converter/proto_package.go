@@ -10,8 +10,8 @@ import (
 type ProtoPackage struct {
 	name     string
 	parent   *ProtoPackage
-	children orderedmap.OrderedMap
-	types    orderedmap.OrderedMap
+	children *orderedmap.OrderedMap
+	types    *orderedmap.OrderedMap
 }
 
 func (c *Converter) lookupType(pkg *ProtoPackage, name string) (*descriptor.DescriptorProto, bool) {
@@ -34,15 +34,15 @@ func (c *Converter) relativelyLookupType(pkg *ProtoPackage, name string) (*descr
 		c.logger.Debug("empty message name")
 		return nil, false
 	case 1:
-		found, ok := pkg.types[components[0]]
+		found, ok := pkg.types.Get(components[0])
 		return found, ok
 	case 2:
 		c.logger.Tracef("Looking for %s in %s at %s (%v)", components[1], components[0], pkg.name, pkg)
-		if child, ok := pkg.children[components[0]]; ok {
+		if child, ok := pkg.children.Get(components[0]); ok {
 			found, ok := c.relativelyLookupType(child, components[1])
 			return found, ok
 		}
-		if msg, ok := pkg.types[components[0]]; ok {
+		if msg, ok := pkg.types.Get(components[0]); ok {
 			found, ok := c.relativelyLookupNestedType(msg, components[1])
 			return found, ok
 		}
@@ -58,7 +58,7 @@ func (c *Converter) relativelyLookupPackage(pkg *ProtoPackage, name string) (*Pr
 	components := strings.Split(name, ".")
 	for _, c := range components {
 		var ok bool
-		pkg, ok = pkg.children[c]
+		pkg, ok = pkg.children.Get(c)
 		if !ok {
 			return nil, false
 		}
