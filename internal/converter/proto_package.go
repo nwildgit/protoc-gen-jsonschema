@@ -34,15 +34,15 @@ func (c *Converter) relativelyLookupType(pkg *ProtoPackage, name string) (*descr
 		c.logger.Debug("empty message name")
 		return nil, false
 	case 1:
-		found, ok := pkg.types.Get(components[0])
-		return found.(*descriptor.DescriptorProto), ok
+		found, ok := pkg.types.Get(components[0]).(*descriptor.DescriptorProto)
+		return found, ok
 	case 2:
 		c.logger.Tracef("Looking for %s in %s at %s (%v)", components[1], components[0], pkg.name, pkg)
-		if child, ok := pkg.children.Get(components[0]); ok {
+		if child, ok := pkg.children.Get(components[0]).(*descriptor.DescriptorProto); ok {
 			found, ok := c.relativelyLookupType(child, components[1])
 			return found, ok
 		}
-		if msg, ok := pkg.types.Get(components[0]); ok {
+		if msg, ok := pkg.types.Get(components[0]).(*descriptor.DescriptorProto); ok {
 			found, ok := c.relativelyLookupNestedType(msg, components[1])
 			return found, ok
 		}
@@ -58,7 +58,7 @@ func (c *Converter) relativelyLookupPackage(pkg *ProtoPackage, name string) (*Pr
 	components := strings.Split(name, ".")
 	for _, c := range components {
 		var ok bool
-		pkg, ok = pkg.children.Get(c)
+		pkg, ok = pkg.children.Get(c).(*ProtoPackage)
 		if !ok {
 			return nil, false
 		}
