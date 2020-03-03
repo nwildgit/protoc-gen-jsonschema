@@ -16,7 +16,7 @@ var (
 		name:     "",
 		parent:   nil,
 		children: orderedmap.New(),
-		types:    orderedmap.New()
+		types:    orderedmap.New(),
 	}
 )
 
